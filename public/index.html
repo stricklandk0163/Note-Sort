@@ -1,0 +1,62 @@
+<html style="width:100%">
+<head>
+  <meta charset="utf-8"/>
+  <!--Imported-->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="css/style.css" media="screen" />
+  <link rel="stylesheet" type="text/css" href="css/mb.slider.css" media="screen" />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/jquery.metadata/2.0/jquery.metadata.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
+  <script src="js/jquery.mb.slider.js"></script>
+  <script src="js/d3.min.js"></script>
+  <script src="js/noteSort.js"></script>
+  <html style="width:100%">
+  <script>
+  window.onload = function(){
+      //Initialize the speed slider
+      $("#speedSlider").mbSlider({
+        showVal: true,
+        formatValue: function (val) {
+          //console.log(val);
+          var formatVal = "Speed: " + val/10 + "x";
+          sliderVal = val/10;
+          return formatVal;
+        }
+      });
+    };
+  </script>
+</head>
+<body ng-app="noteSort" ng-controller="SortAlgCtrl" style="width:100%; margin:0px">
+  <div class="header">
+    <img class = "logo" src="misc/logo.png"/>
+    <div class="sortFunctionButtons">
+      <span class="sortFunctionButton" ng-repeat="sortType in sortTypes">{{sortType}}</span>
+    </div>
+  </div>
+  <div class="mainArea">
+    <div style="width:55%; height:100%; float:left; margin-top:50px; padding-left:100px;" id="myDiv"></div>
+    <div style="width:45%; height:100%; float:right; overflow:auto; padding-top: 100px;" id="algStepsDiv"></div>
+  </div>
+  <div class="footer">
+    <div class="controls">
+      <div class="dropup" style="display: inline-block;">
+        <button class="btn btn-default dropdown-toggle footerButton" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Choose Song
+          <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" style="background-color:#F80A94;" aria-labelledby="dropdownMenu2">
+          <li class="songName" ng-repeat="song in songs">
+            {{song}}
+          </li>
+        </ul>
+      </div>
+      <div id="speedSlider" style="float: left" data-property="{rangeColor:'#F80A94',negativeColor:'#F80A94', startAt:50, grid:1, maxVal:50, minVal:1}"></div>
+      <button type="button"  class="btn footerButton" id="pauseButton">Play</button>
+      <button type="button"  class="btn footerButton" id="stepButton">Step</button>
+      <button type="button"  class="btn footerButton" id="resetButton">Reset</button>
+    </div>
+  </div>
+</body>
+</html>
