@@ -17,7 +17,7 @@ app.use(express.static('./public'));
 // routes ================================
 // Note: this is done after session initialization for a reason
 // load our routes
-require('./routes/routes.js')(app, passport);
+require('./routes/routes.js')(app);
 
 // launch ======================================================================
 app.listen(port);
