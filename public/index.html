@@ -32,7 +32,7 @@
   <div class="header">
     <img class = "logo" src="misc/logo.png"/>
     <div class="sortFunctionButtons">
-      <span class="sortFunctionButton" ng-repeat="sortType in sortTypes">{{sortType}}</span>
+      <span ng-class="{'sortFunctionButton': true, 'sortButtonActive': sortType == activeAlgorithm}" ng-click="setActiveAlgorithm(sortType)" ng-repeat="sortType in sortTypes">{{sortType}}</span>
     </div>
   </div>
   <div class="mainArea">
@@ -47,7 +47,7 @@
           <span class="caret"></span>
         </button>
         <ul class="dropdown-menu" style="background-color:#F80A94;" aria-labelledby="dropdownMenu2">
-          <li class="songName" ng-repeat="song in songs">
+          <li ng-class="{'songName': true, 'activeSong': song == activeSong}" ng-click="setActiveSong(song)" ng-repeat="song in songs">
             {{song}}
           </li>
         </ul>

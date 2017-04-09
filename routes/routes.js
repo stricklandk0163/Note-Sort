@@ -4,7 +4,7 @@ module.exports = function(app) {
   //Run the passed sorting algorithm on the given song and return the list of frames from the sort
   app.get('/sort/frames', (req,res) => {
     var algorithm = req.query.algorithm;
-    //var song = req.query.song;
+    var song = req.query.song;
     var data = [5,4,3,2,1];
 
     switch(algorithm) {

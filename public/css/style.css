@@ -15,6 +15,9 @@
   color: #67C8FF;
   cursor: pointer;
 }
+.sortButtonActive{
+  color: #67C8FF;
+}
 .sortFunctionButtons{
   float: right;
   width: calc(100% - 240px);
@@ -31,6 +34,10 @@
   color: WHITE;
   cursor: pointer;
 }
+.activeSong{
+  background-color: #67C8FF;
+}
+
 .logo{
   max-height: 59px;
 }
