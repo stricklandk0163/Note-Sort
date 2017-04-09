@@ -1,0 +1,27 @@
+{
+  "name": "note-sort",
+  "version": "1.0.0",
+  "description": "Sorting algorithm visualization with sound",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stricklandk0163/Note-Sort.git"
+  },
+  "keywords": [
+    "Sorting",
+    "Visualization"
+  ],
+  "author": "Karl Strickland and Tyler Palmer",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/stricklandk0163/Note-Sort/issues"
+  },
+  "homepage": "https://github.com/stricklandk0163/Note-Sort#readme",
+  "dependencies": {
+    "body-parser": "^1.17.1",
+    "express": "^4.15.2"
+  }
+}
