@@ -188,6 +188,14 @@ app.controller("SortAlgCtrl", function($scope,$http, $location, draw){
     }, 100/$scope.sliderValue)
   };
 
+  $scope.step = function(){
+    if($scope.paused && $scope.currentFrame < $scope.frames.length-1){
+      $scope.currentFrame++;
+      var currentFrame = $scope.frames[$scope.currentFrame];
+      draw(currentFrame.data, currentFrame.importantIndices);
+    }
+  };
+
   $scope.reset = function(){
     $scope.playButtonText = "Play";
     $scope.paused = true;
