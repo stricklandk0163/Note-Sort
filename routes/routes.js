@@ -80,6 +80,15 @@ module.exports = function(app) {
     res.json(songTitles);
   });
 
+  //Get a single song by id
+  app.get('/songs/notes', (req, res) => {
+    var songTitle = req.query.song;
+    if(!songs.hasOwnProperty(songTitle))
+      res.json("Song not found");
+    else
+      res.json(songs[songTitle]);
+  })
+
   //Get all sort types TODO: make this work with database
   app.get('/sortTypes', (req,res)=>{
     var types = [];

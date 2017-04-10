@@ -2,6 +2,20 @@ var app = angular.module('noteSort', ['rzModule']);
 
 //Provider for the draw function
 app.config(function($provide) {
+  $provide.value('playNotes', function(song, importantIndices){
+    //Play notes associated with current frame
+    for(var i = 0; i<importantIndices.length; i++){
+      var noteIndex = importantIndices[i];
+      if(song[noteIndex]){
+        var noteFilePath = song[noteIndex].noteFile;
+        //Seth Added this for Empty Notes
+  		  if(noteFilePath != "no"){
+  			     var audio = new Audio(noteFilePath);
+  			        audio.play();
+  		  }
+      }
+    }
+  });
   $provide.value('draw', function(frameData, importantIndices) {
     //Remove the previous graph
     d3.select("svg").remove();
@@ -51,7 +65,7 @@ app.config(function($provide) {
 });
 
 //Controller to view an individual advertisement
-app.controller("SortAlgCtrl", function($scope,$http, $location, draw){
+app.controller("SortAlgCtrl", function($scope,$http, $location, draw, playNotes){
   //Get the list of songs and set the scope variable
   $scope.getSongTitles = function(){
     return new Promise(function(resolve){
@@ -137,6 +151,26 @@ app.controller("SortAlgCtrl", function($scope,$http, $location, draw){
     });
   };
 
+  //Get the psuedo code for the currently active algorithm
+  $scope.getActiveSongNotes = function(){
+    return new Promise(function(resolve){
+      $http({
+        method: 'GET',
+        url: '/songs/notes',
+        params: {
+          song: $scope.activeSong
+        }
+      }).then(function successCallback(response) {
+    		$scope.activeSongNotes = response.data;
+        console.log($scope.activeSongNotes);
+        resolve();
+    	}, function errorCallback(response) {
+    	  $scope.activeSongNotes = [];
+        resolve();
+    	});
+    });
+  };
+
   //Check if a step with the given index is active for the current frame
   $scope.stepIsActive = function(stepNum){
     var activeSteps = $scope.frames[$scope.currentFrame].algorithmSteps;
@@ -182,16 +216,19 @@ app.controller("SortAlgCtrl", function($scope,$http, $location, draw){
       $scope.currentFrame++;
       var currentFrame = $scope.frames[$scope.currentFrame];
       draw(currentFrame.data, currentFrame.importantIndices);
+      playNotes($scope.activeSongNotes, currentFrame.importantIndices.map(function(x){return currentFrame.data[x]}));
       $scope.$apply();
       if(loopId == $scope.currentDrawLoop && !$scope.paused && $scope.currentFrame < $scope.frames.length-1)
         drawLoop(loopId);
     }, 100/$scope.sliderValue)
   };
 
+  //Increment the current frame and draw a single step
   $scope.step = function(){
     if($scope.paused && $scope.currentFrame < $scope.frames.length-1){
       $scope.currentFrame++;
       var currentFrame = $scope.frames[$scope.currentFrame];
+      playNotes($scope.activeSongNotes, currentFrame.importantIndices.map(function(x){return currentFrame.data[x]}));
       draw(currentFrame.data, currentFrame.importantIndices);
     }
   };
@@ -205,6 +242,7 @@ app.controller("SortAlgCtrl", function($scope,$http, $location, draw){
       draw(currentFrame.data, currentFrame.importantIndices);
     });
     $scope.getActiveAlgorithmPsuedo();
+    $scope.getActiveSongNotes();
   }
 
   //Initialize variables
@@ -219,6 +257,7 @@ app.controller("SortAlgCtrl", function($scope,$http, $location, draw){
   $scope.currentDrawLoop = 0; //Used as an id for the currently running draw loop
   $scope.playButtonText = "Play";
   $scope.paused = true;
+  $scope.activeSongNotes = [];
 
   //Load page info and initialize a sorting algorithm /song
   $scope.loadPageInfo()
@@ -227,7 +266,8 @@ app.controller("SortAlgCtrl", function($scope,$http, $location, draw){
         .then(function(data){
           var currentFrame = $scope.frames[$scope.currentFrame];
           draw(currentFrame.data, currentFrame.importantIndices);
-          $scope.getActiveAlgorithmPsuedo()
+          $scope.getActiveAlgorithmPsuedo();
+          $scope.getActiveSongNotes();
         })
     });
 });
