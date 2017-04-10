@@ -165,6 +165,16 @@ app.controller("SortAlgCtrl", function($scope,$http, $location, draw){
     $scope.getActiveAlgorithmPsuedo();
   };
 
+  $scope.playFrames = function(){
+    setTimeout(function(){
+      var currentFrame = $scope.frames[$scope.currentFrame];
+      draw(currentFrame.data, currentFrame.importantIndices);
+      $scope.currentFrame++;
+      $scope.$apply();
+      $scope.playFrames();
+    }, 100/$scope.sliderValue)
+  };
+
   //Initialize variables
   $scope.songs = [];
   $scope.sortTypes = [];
@@ -174,6 +184,7 @@ app.controller("SortAlgCtrl", function($scope,$http, $location, draw){
   $scope.psuedoCode = [];
   $scope.currentFrame = 0;
   $scope.sliderValue = 1;
+  $scope.currentDrawLoop = 0; //Used as an id for the currently running draw loop
 
   //Load page info and initialize a sorting algorithm /song
   $scope.loadPageInfo()

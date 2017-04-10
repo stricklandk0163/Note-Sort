@@ -15,20 +15,6 @@
   <script src="js/d3.min.js"></script>
   <script src="js/noteSort.js"></script>
   <html style="width:100%">
-  <script>
-  /*window.onload = function(){
-      //Initialize the speed slider
-      $("#speedSlider").mbSlider({
-        showVal: true,
-        formatValue: function (val) {
-          //console.log(val);
-          var formatVal = "Speed: " + val/10 + "x";
-          sliderVal = val/10;
-          return formatVal;
-        }
-      });
-    };*/
-  </script>
 </head>
 <body ng-app="noteSort" ng-controller="SortAlgCtrl" style="width:100%; margin:0px">
   <div class="header">
@@ -41,7 +27,6 @@
     <div style="width:55%; height:100%; float:left; margin-top:50px; padding-left:100px;" id="myDiv"></div>
     <div style="width:45%; height:100%; float:right; overflow:auto; padding-top: 100px;" id="algStepsDiv">
       <span  ng-repeat="step in psuedoCode track by $index" id="alg_step_{{$index}}"><span ng-class="{'algStep': true, 'mainAlgStep': stepIsActive($index)}">{{step}}</span><br /> <span>
-
     </div>
   </div>
   <div class="footer">
@@ -72,7 +57,7 @@
                               }}">
         </rzslider>
        </div>
-      <button type="button"  class="btn footerButton" id="pauseButton">Play</button>
+      <button type="button"  class="btn footerButton" id="pauseButton" ng-click="playFrames();">Play</button>
       <button type="button"  class="btn footerButton" id="stepButton">Step</button>
       <button type="button"  class="btn footerButton" id="resetButton">Reset</button>
     </div>
