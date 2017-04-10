@@ -3,18 +3,20 @@
   <meta charset="utf-8"/>
   <!--Imported-->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/angularjs-slider/6.1.0/rzslider.min.css"/>
   <link rel="stylesheet" type="text/css" href="css/style.css" media="screen" />
   <link rel="stylesheet" type="text/css" href="css/mb.slider.css" media="screen" />
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
   <script src="https://cdn.jsdelivr.net/jquery.metadata/2.0/jquery.metadata.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
-  <script src="js/jquery.mb.slider.js"></script>
+  <!--<script src="js/jquery.mb.slider.js"></script>-->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angularjs-slider/6.1.0/rzslider.min.js"></script>
   <script src="js/d3.min.js"></script>
   <script src="js/noteSort.js"></script>
   <html style="width:100%">
   <script>
-  window.onload = function(){
+  /*window.onload = function(){
       //Initialize the speed slider
       $("#speedSlider").mbSlider({
         showVal: true,
@@ -25,7 +27,7 @@
           return formatVal;
         }
       });
-    };
+    };*/
   </script>
 </head>
 <body ng-app="noteSort" ng-controller="SortAlgCtrl" style="width:100%; margin:0px">
@@ -55,7 +57,21 @@
           </li>
         </ul>
       </div>
-      <div id="speedSlider" style="float: left" data-property="{rangeColor:'#F80A94',negativeColor:'#F80A94', startAt:50, grid:1, maxVal:50, minVal:1}"></div>
+      <div style="width:50%; float: left; margin-top: -10px; margin-right: 10px">
+        <rzslider
+          rz-slider-model="sliderValue"
+          rz-slider-options="{floor: .1,
+                              ceil: 5,
+                              hideLimitLabels: true,
+                              precision: 1,
+                              step: 0.1,
+                              showSelectionBar: true,
+                              selectionBarGradient: {
+                                from: '#F80A94',
+                                to: '#67C8FF'
+                              }}">
+        </rzslider>
+       </div>
       <button type="button"  class="btn footerButton" id="pauseButton">Play</button>
       <button type="button"  class="btn footerButton" id="stepButton">Step</button>
       <button type="button"  class="btn footerButton" id="resetButton">Reset</button>
