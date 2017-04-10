@@ -67,6 +67,7 @@ app.controller("SortAlgCtrl", function($scope,$http, $location){
     });
   };
 
+  //Get the psuedo code for the currently active algorithm
   $scope.getActiveAlgorithmPsuedo = function(){
     return new Promise(function(resolve){
       $http({
@@ -84,29 +85,40 @@ app.controller("SortAlgCtrl", function($scope,$http, $location){
         resolve();
     	});
     });
-  }
+  };
+
+  //Check if a step with the given index is active for the current frame
+  $scope.stepIsActive = function(stepNum){
+    var activeSteps = $scope.frames[$scope.currentFrame].algorithmSteps;
+    if(activeSteps.indexOf(stepNum) >= 0)
+      return true;
+    return false;
+  };
 
   //Update the active algorithm and generate new frames based on it
   $scope.setActiveAlgorithm = function(algorithm){
     $scope.activeAlgorithm = algorithm;
     $scope.getSortFrames();
     $scope.getActiveAlgorithmPsuedo();
-  }
+  };
 
   //Update the active song and generate new frames based on it
   $scope.setActiveSong = function(song){
     $scope.activeSong = song;
     $scope.getSortFrames();
     $scope.getActiveAlgorithmPsuedo();
-  }
+  };
 
-  //Initialize page
+  //Initialize variables
   $scope.songs = [];
   $scope.sortTypes = [];
   $scope.activeAlgorithm = "";
   $scope.activeSong = "";
   $scope.frames = [];
   $scope.psuedoCode = [];
+  $scope.currentFrame = 0;
+
+  //Load page info and initialize a sorting algorithm /song
   $scope.loadPageInfo()
     .then(function(data){
       $scope.getSortFrames()

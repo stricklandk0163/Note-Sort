@@ -216,3 +216,12 @@ function partition(A, lo, hi, frames) {
   frames.push({data:A.slice(), algorithmSteps:[6, 14], importantIndices:[i]});
   return i;
 }
+
+//Add the frames needed to play a song based on the sorted song array
+module.exports.songFrames = function(A){
+  var frames = [];
+  for(var i=0; i<A.length; i++){
+    frames.push({data:A.slice(), algorithmSteps:[0], importantIndices:[i]});
+  }
+  return frames;
+}
