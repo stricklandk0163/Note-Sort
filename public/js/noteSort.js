@@ -148,32 +148,56 @@ app.controller("SortAlgCtrl", function($scope,$http, $location, draw){
   //Update the active algorithm and generate new frames based on it
   $scope.setActiveAlgorithm = function(algorithm){
     $scope.activeAlgorithm = algorithm;
-    $scope.getSortFrames().then(function(data){
-      var currentFrame = $scope.frames[$scope.currentFrame];
-      draw(currentFrame.data, currentFrame.importantIndices);
-    });
-    $scope.getActiveAlgorithmPsuedo();
+    $scope.reset();
   };
 
   //Update the active song and generate new frames based on it
   $scope.setActiveSong = function(song){
     $scope.activeSong = song;
+    $scope.reset();
+  };
+
+  //If paused, start playing the a new draw loop
+  //If playing, pause
+  $scope.play = function(){
+    if($scope.paused){
+      $scope.paused = false;
+      $scope.playButtonText = "Pause";
+      $scope.currentDrawLoop++;
+      drawLoop($scope.currentDrawLoop);
+    }
+    else{
+      $scope.paused = true;
+      $scope.playButtonText = "Play";
+    }
+
+  };
+
+  //Continue to loop drawing the current frame until either
+  // A. We run out of frames
+  // B. The application is paused
+  // C. A new draw loop is started
+  var drawLoop = function(loopId){
+    setTimeout(function(){
+      $scope.currentFrame++;
+      var currentFrame = $scope.frames[$scope.currentFrame];
+      draw(currentFrame.data, currentFrame.importantIndices);
+      $scope.$apply();
+      if(loopId == $scope.currentDrawLoop && !$scope.paused && $scope.currentFrame < $scope.frames.length-1)
+        drawLoop(loopId);
+    }, 100/$scope.sliderValue)
+  };
+
+  $scope.reset = function(){
+    $scope.playButtonText = "Play";
+    $scope.paused = true;
+    $scope.currentFrame = 0;
     $scope.getSortFrames().then(function(data){
       var currentFrame = $scope.frames[$scope.currentFrame];
       draw(currentFrame.data, currentFrame.importantIndices);
     });
     $scope.getActiveAlgorithmPsuedo();
-  };
-
-  $scope.playFrames = function(){
-    setTimeout(function(){
-      var currentFrame = $scope.frames[$scope.currentFrame];
-      draw(currentFrame.data, currentFrame.importantIndices);
-      $scope.currentFrame++;
-      $scope.$apply();
-      $scope.playFrames();
-    }, 100/$scope.sliderValue)
-  };
+  }
 
   //Initialize variables
   $scope.songs = [];
@@ -185,6 +209,8 @@ app.controller("SortAlgCtrl", function($scope,$http, $location, draw){
   $scope.currentFrame = 0;
   $scope.sliderValue = 1;
   $scope.currentDrawLoop = 0; //Used as an id for the currently running draw loop
+  $scope.playButtonText = "Play";
+  $scope.paused = true;
 
   //Load page info and initialize a sorting algorithm /song
   $scope.loadPageInfo()
