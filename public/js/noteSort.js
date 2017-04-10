@@ -67,16 +67,37 @@ app.controller("SortAlgCtrl", function($scope,$http, $location){
     });
   };
 
+  $scope.getActiveAlgorithmPsuedo = function(){
+    return new Promise(function(resolve){
+      $http({
+        method: 'GET',
+        url: '/sortTypes/psuedoCode',
+        params: {
+          algorithm: $scope.activeAlgorithm
+        }
+      }).then(function successCallback(response) {
+    		$scope.psuedoCode = response.data;
+        console.log($scope.psuedoCode);
+        resolve();
+    	}, function errorCallback(response) {
+    	  $scope.psuedoCode = [];
+        resolve();
+    	});
+    });
+  }
+
   //Update the active algorithm and generate new frames based on it
   $scope.setActiveAlgorithm = function(algorithm){
     $scope.activeAlgorithm = algorithm;
     $scope.getSortFrames();
+    $scope.getActiveAlgorithmPsuedo();
   }
 
   //Update the active song and generate new frames based on it
   $scope.setActiveSong = function(song){
     $scope.activeSong = song;
     $scope.getSortFrames();
+    $scope.getActiveAlgorithmPsuedo();
   }
 
   //Initialize page
@@ -85,6 +106,12 @@ app.controller("SortAlgCtrl", function($scope,$http, $location){
   $scope.activeAlgorithm = "";
   $scope.activeSong = "";
   $scope.frames = [];
+  $scope.psuedoCode = [];
   $scope.loadPageInfo()
-    .then(function(data){$scope.getSortFrames();});
+    .then(function(data){
+      $scope.getSortFrames()
+        .then(function(data){
+          $scope.getActiveAlgorithmPsuedo()
+        })
+    });
 });

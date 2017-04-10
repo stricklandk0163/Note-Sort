@@ -37,7 +37,10 @@
   </div>
   <div class="mainArea">
     <div style="width:55%; height:100%; float:left; margin-top:50px; padding-left:100px;" id="myDiv"></div>
-    <div style="width:45%; height:100%; float:right; overflow:auto; padding-top: 100px;" id="algStepsDiv"></div>
+    <div style="width:45%; height:100%; float:right; overflow:auto; padding-top: 100px;" id="algStepsDiv">
+      <span  ng-repeat="step in psuedoCode track by $index" ng-trim="false" id="alg_step_{{$index}}"><span ng-bind-html-unsafe="expression" class='mainAlgStep'>{{step}}</span><br /> <span>
+
+    </div>
   </div>
   <div class="footer">
     <div class="controls">

@@ -1,0 +1,94 @@
+[
+   {
+      "name":"COCKTAIL",
+      "pseudo":[
+         "cocktailSort(A)",
+         "   sorted = true",
+         "   while sorted = true",
+         "        for i = 0 to A.length - 2",
+         "            if A[i] > A[i + 1]",
+         "                swap i with i + 1",
+         "                sorted = true",
+         "        if sorted not true, break",
+         "        for i = A.length - 2 to 0",
+         "            if A[i] > A[i + 1]",
+         "                swap i with i + 1",
+         "                sorted = true"
+      ]
+   },
+   {
+      "name":"SELECT",
+      "pseudo":[
+         "selectSort(A)",
+         "    for i = 0 to length",
+         "        min = i",
+         "        for j = i + 1 to length",
+         "            if A[j] < A[min]",
+         "                min = j",
+         "        if i != min",
+         "            swap i with min"
+      ]
+   },
+   {
+      "name":"INSERT",
+      "pseudo":[
+         "insertSort(A)",
+         "    for i = 1 to A.length",
+         "        temp = A[i]",
+         "        for j = i - 1 to 0 where A[j] > temp",
+         "            A[j + 1] = A[j]",
+         "        A[j + 1] = temp"
+      ]
+   },
+   {
+      "name":"MERGE",
+      "pseudo":[
+         "mergesort(A, first, last)",
+         "  if first >= last",
+         "    return A",
+         "    mid = (first + last) / 2",
+         "    mergesort(A, first, mid)",
+         "    mergesort(A, mid + 1, last)",
+         "    lt = first, rt = mid + 1",
+         "    while lt <= mid and rt <= last",
+         "        if A[lt] <= A[rt]",
+         "            lt++",
+         "        else",
+         "            temp = A[rt]",
+         "            for i = rt to lt",
+         "                A[i] = A[i - 1]",
+         "            A[lt] = temp",
+         "            lt++, mid++, rt++"
+      ]
+   },
+   {
+      "name":"BUBBLE",
+      "pseudo":[
+         "bubblesort(A)",
+         "    for i = 0 to A.length",
+         "        for j = 0 to A.length - i - 1",
+         "            if A[j] > A[j + 1]",
+         "                swap A[j] with A[j + 1]"
+      ]
+   },
+   {
+      "name":"QUICK",
+      "pseudo":[
+         "quickSort(A, lo, hi)",
+         "    if lo < hi",
+         "       p = partition(A, lo, hi)",
+         "       quicksort(A, lo, p - 1)",
+         "       quicksort(A, p + 1, hi)",
+         "",
+         "partition(A, lo, hi)",
+         "    pivot = A[hi]",
+         "    i = lo",
+         "    for j = lo to hi - 1",
+         "       if A[j] <= pivot",
+         "          swap A[i] with A[j]",
+         "          i++",
+         "    swap A[i] with A[hi]",
+         "    return i"
+      ]
+   }
+]
