@@ -1,7 +1,57 @@
 var app = angular.module('noteSort', []);
 
+//Provider for the draw function
+app.config(function($provide) {
+  $provide.value('draw', function(frameData, importantIndices) {
+    //Remove the previous graph
+    d3.select("svg").remove();
+    
+    //Width and height
+    var w = 500;
+    var h = 400;
+    var barPadding =1;
+
+    //Create SVG element
+    var svg = d3.select("#myDiv")
+        .append("svg")
+        .attr("width", w)
+        .attr("height", h);
+
+    svg.selectAll("rect")
+     .data(frameData)
+     .enter()
+     .append("rect")
+     .attr("x", function(d, i) {
+        return i * (w / frameData.length);
+     })
+     .attr("y", function(d) {
+        return h-(h/frameData.length) * (d+1);
+     })
+     .attr("width", w / frameData.length - barPadding)
+     .attr("height", function(d) {
+        return (h/frameData.length) * (d+1);
+     })
+     .attr("fill", function(d, i) {
+        if(importantIndices.indexOf(i) >= 0){
+          return("White");
+        }
+        else{
+          if(d == 0){
+            return "rgb(103,200,255)"
+          }
+          else{
+            var r = Math.round(103+145*(d/(frameData.length-1)));
+            var g = Math.round(200-190*(d/(frameData.length-1)));
+            var b = Math.round(255-107*(d/(frameData.length-1)));
+            return "rgb("+ r +","+ g +","+ b +")";
+          }
+        }
+     });
+  });
+});
+
 //Controller to view an individual advertisement
-app.controller("SortAlgCtrl", function($scope,$http, $location){
+app.controller("SortAlgCtrl", function($scope,$http, $location, draw){
   //Get the list of songs and set the scope variable
   $scope.getSongTitles = function(){
     return new Promise(function(resolve){
@@ -98,14 +148,20 @@ app.controller("SortAlgCtrl", function($scope,$http, $location){
   //Update the active algorithm and generate new frames based on it
   $scope.setActiveAlgorithm = function(algorithm){
     $scope.activeAlgorithm = algorithm;
-    $scope.getSortFrames();
+    $scope.getSortFrames().then(function(data){
+      var currentFrame = $scope.frames[$scope.currentFrame];
+      draw(currentFrame.data, currentFrame.importantIndices);
+    });
     $scope.getActiveAlgorithmPsuedo();
   };
 
   //Update the active song and generate new frames based on it
   $scope.setActiveSong = function(song){
     $scope.activeSong = song;
-    $scope.getSortFrames();
+    $scope.getSortFrames().then(function(data){
+      var currentFrame = $scope.frames[$scope.currentFrame];
+      draw(currentFrame.data, currentFrame.importantIndices);
+    });
     $scope.getActiveAlgorithmPsuedo();
   };
 
@@ -123,6 +179,8 @@ app.controller("SortAlgCtrl", function($scope,$http, $location){
     .then(function(data){
       $scope.getSortFrames()
         .then(function(data){
+          var currentFrame = $scope.frames[$scope.currentFrame];
+          draw(currentFrame.data, currentFrame.importantIndices);
           $scope.getActiveAlgorithmPsuedo()
         })
     });
