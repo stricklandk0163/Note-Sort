@@ -1,11 +1,11 @@
-var app = angular.module('noteSort', []);
+var app = angular.module('noteSort', ['rzModule']);
 
 //Provider for the draw function
 app.config(function($provide) {
   $provide.value('draw', function(frameData, importantIndices) {
     //Remove the previous graph
     d3.select("svg").remove();
-    
+
     //Width and height
     var w = 500;
     var h = 400;
@@ -173,6 +173,7 @@ app.controller("SortAlgCtrl", function($scope,$http, $location, draw){
   $scope.frames = [];
   $scope.psuedoCode = [];
   $scope.currentFrame = 0;
+  $scope.sliderValue = 1;
 
   //Load page info and initialize a sorting algorithm /song
   $scope.loadPageInfo()
