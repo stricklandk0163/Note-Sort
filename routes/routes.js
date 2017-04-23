@@ -101,11 +101,15 @@ module.exports = function(app) {
   //Get the pseudo code for a give sort types TODO: make this work with database
   app.get('/sortTypes/psuedoCode', (req, res) => {
     var algorithm = req.query.algorithm;
+    var found = false;
     for(var i = 0; i < algs.length; i++){
       if(algs[i].name == algorithm){
         res.json(algs[i].pseudo);
+        found = true;
       }
     }
-    res.json("Algorithm not found");
+    if(!found){
+         res.json("Algorithm not found");
+    }
   });
 }
