@@ -1,6 +1,7 @@
 var sortingAlgorithms = require('../sortingAlgorithms');
-var songs = require('../data/songs');
-var algs = require('../data/algs');
+var db = require('couchdb-promises')({
+     baseUrl: 'http://localhost:5984'
+})
 
 //Shuffles array
 function shuffle(array) {
@@ -25,91 +26,108 @@ function shuffle(array) {
 module.exports = function(app) {
   //Run the passed sorting algorithm on the given song and return the list of frames from the sort
   app.get('/sort/frames', (req,res) => {
-    var algorithm = req.query.algorithm;
-    var song = req.query.song;
+    db.getView("note-sort", "song", "notes").then((data) => {
+      var finalData = data.data.rows.find((row) => {
+        if(row.value.name == req.query.song){
+          return true;
+        }
+      });
+      if(finalData){
+        var noteData = finalData.value.notes.map((tuple) => {return tuple.index});
+        noteData = shuffle(noteData);
+        //Run the selected sorting algorithm and get the list of frames from running the sort
+        var frames = [];
+        switch(req.query.algorithm) {
+        case "MERGE":
+            frames = sortingAlgorithms.mergesortWrapper(noteData);
+            break;
+        case "SELECT":
+            frames = sortingAlgorithms.selectsort(noteData);
+            break;
+        case "INSERT":
+            frames = sortingAlgorithms.insertsort(noteData);
+            break;
+        case "QUICK":
+            frames = sortingAlgorithms.quickSortWrapper(noteData);
+            break;
+        case "COCKTAIL":
+            frames = sortingAlgorithms.cocktailsort(noteData);
+            break;
+        case "BUBBLE":
+            frames = sortingAlgorithms.bubblesort(noteData);
+            break;
+        default:
+            res.json("Algorithm not found");
+            return;
+        }
 
-    //Check if song is in songs json
-    if (!songs.hasOwnProperty(song)){ //TODO make this work with database
-      res.json("Song does not exist")
-    }
+        //Add song frames based on the final frame in the sort
+        var songFrames = sortingAlgorithms.songFrames(frames[frames.length -1].data)
 
-    //Map song to a scrambled array of values
-    var data = songs[song].map((tuple) => {return tuple.index});
-    data = shuffle(data);
-
-    //Run the selected sorting algorithm and get the list of frames from running the sort
-    var frames = [];
-    switch(algorithm) {
-    case "MERGE":
-        frames = sortingAlgorithms.mergesortWrapper(data);
-        break;
-    case "SELECT":
-        frames = sortingAlgorithms.selectsort(data);
-        break;
-    case "INSERT":
-        frames = sortingAlgorithms.insertsort(data);
-        break;
-    case "QUICK":
-        frames = sortingAlgorithms.quickSortWrapper(data);
-        break;
-    case "COCKTAIL":
-        frames = sortingAlgorithms.cocktailsort(data);
-        break;
-    case "BUBBLE":
-        frames = sortingAlgorithms.bubblesort(data);
-        break;
-    default:
-        res.json("Algorithm not found");
-    }
-
-    //Add song frames based on the final frame in the sort
-    var songFrames = sortingAlgorithms.songFrames(frames[frames.length -1].data)
-
-    //Add the song frames to the frames array
-    res.json(frames.concat(songFrames));
+        //Add the song frames to the frames array
+        res.json(frames.concat(songFrames));
+      }else{
+        res.json("Song not found");
+      }
+    });
   });
 
-  //TODO: Janky AF right now. This method only needs to serve the song names. Also please clean up the song names, right now they're in camel case
+  //Get all song names
   app.get('/songs', (req, res) => {
-    var songTitles = [];
-    for (var song in songs) {
-      if (songs.hasOwnProperty(song)) {
-        songTitles.push(song);
-      }
-    }
-    res.json(songTitles);
+    db.getView("note-sort", "song", "names").then((data) => {
+      var sort = []
+      //console.info(data);
+      data.data.rows.forEach((row) => {
+        sort.push(row.value);
+      })
+      //console.info(sort);
+      res.json(sort);
+    });
   });
 
   //Get a single song by id
   app.get('/songs/notes', (req, res) => {
-    var songTitle = req.query.song;
-    if(!songs.hasOwnProperty(songTitle))
-      res.json("Song not found");
-    else
-      res.json(songs[songTitle]);
+    db.getView("note-sort", "song", "notes").then((data) => {
+      var finalData = data.data.rows.find((row) => {
+        if(row.value.name == req.query.song){
+          return true;
+        }
+      });
+      if(finalData){
+        res.json(finalData.value.notes);
+      }else{
+        res.json("Algorithm not found");
+      }
+    });
   })
 
-  //Get all sort types TODO: make this work with database
+  //Get all sort type names
   app.get('/sortTypes', (req,res)=>{
-    var types = [];
-    for(var i = 0; i < algs.length; i++){
-      types.push(algs[i].name);
-    }
-    res.json(types);
+    db.getView("note-sort", "alg", "names").then((data) => {
+      var sort = []
+      //console.info(data);
+      data.data.rows.forEach((row) => {
+        sort.push(row.value);
+      })
+      //console.info(sort);
+      res.json(sort);
+    });
+    //res.json(types);
   });
 
-  //Get the pseudo code for a give sort types TODO: make this work with database
+  //Get the pseudo code for a given sort type
   app.get('/sortTypes/psuedoCode', (req, res) => {
-    var algorithm = req.query.algorithm;
-    var found = false;
-    for(var i = 0; i < algs.length; i++){
-      if(algs[i].name == algorithm){
-        res.json(algs[i].pseudo);
-        found = true;
+    db.getView("note-sort", "alg", "pseudo").then((data) => {
+      var finalData = data.data.rows.find((row) => {
+        if(row.key == req.query.algorithm){
+          return true;
+        }
+      });
+      if(finalData){
+        res.json(finalData.value);
+      }else{
+        res.json("Algorithm not found");
       }
-    }
-    if(!found){
-         res.json("Algorithm not found");
-    }
+    });
   });
 }

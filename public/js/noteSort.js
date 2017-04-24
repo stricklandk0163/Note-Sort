@@ -162,7 +162,6 @@ app.controller("SortAlgCtrl", function($scope,$http, $location, draw, playNotes)
         }
       }).then(function successCallback(response) {
     		$scope.activeSongNotes = response.data;
-        console.log($scope.activeSongNotes);
         resolve();
     	}, function errorCallback(response) {
     	  $scope.activeSongNotes = [];
